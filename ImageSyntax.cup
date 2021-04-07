@@ -1,0 +1,39 @@
+package com.imagegenerator.file;
+
+
+
+
+parser code {:
+    
+:}
+
+terminal COMA, OPEN_CURLY, CLOSE_CURLY, COLON, SEMI_COLON, NUMBER, USERID;
+
+non terminal beginning, auxcap, auxuser, auxuser_help, cap, cap_re, user, user_re;
+
+start with beginning;
+
+beginning ::= cap
+             | number;
+
+auxcap ::= NUMBER OPEN_CURLY NUMBER COMA NUMBER COMA NUMBER CLOSE_CURLY
+
+auxuser ::= USERID SEMI_COLON auxuser_help COLON
+            |NUMBER SEMI_COLON auxuser_help COLON;
+
+auxuser_help ::= NUMBER
+                |NUMBER COMA NUMBER
+                |NUMBER COMA NUMBER COMA NUMBER
+                |/*empty*/;
+
+cap ::= auxcap cap_re
+        |error cap_re;
+
+cap_re ::= auxcap cap_re
+            |/*empty*/;
+
+user ::= auxuser user_re
+        |error user_re;
+
+user_re ::= auxuser user_re 
+            |/* empty */;
