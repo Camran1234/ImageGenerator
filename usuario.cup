@@ -1,0 +1,46 @@
+package com.imagegenerator.datareader;
+
+import com.imagegenerator.avltree.AvlTree;
+import com.imagegenerator.avltree.NodeAvl;
+import com.imagegenerator.circledoublelist.CircleDoubleList;
+import java_cup.runtime.XMLElement;
+
+parser code {:
+    CircleDoubleList list = new CircleDoubleList();
+   AvlTree tree = new AvlTree();
+    NodeAvl node = new NodeAvl("");
+
+   public AvlTree getAvlTree(){
+       return tree;
+   }
+
+   public void setCircleDoubleList(CircleDoubleList doubleList){
+       this.list = doubleList;
+   }
+:}
+
+terminal COMA, OPEN_CURLY, CLOSE_CURLY, COLON, SEMI_COLON, NUMBER, ID, COLOR;
+
+non terminal beginning, auxuser, auxuser_re, user, user_re;
+
+start with beginning;
+
+beginning ::= user_re;
+
+auxuser ::= NUMBER:image auxuser_re {:
+                                    node.setNodeImage(list.findNode(Integer.parseInt(String.valueOf(image))));
+                                    :}
+            |auxuser_re;
+
+auxuser_re ::= COMA NUMBER:image auxuser_re {:
+                                            node.setNodeImage(list.findNode(Integer.parseInt(String.valueOf(image))));
+                                            :}
+                |COLON {:node = new NodeAvl("");:};
+
+user ::= ID:user SEMI_COLON auxuser  {:
+                                        node.setId(String.valueOf(user));
+                                        tree.addNode(node);
+                                        :};
+user_re::= user user_re
+            |/*empty*/;                                        
+

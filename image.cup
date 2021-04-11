@@ -1,0 +1,46 @@
+package com.imagegenerator.datareader;
+
+import com.imagegenerator.circledoublelist.CircleDoubleList;
+import com.imagegenerator.circledoublelist.NodeDouble;
+import com.imagegenerator.treebb.BBTree;
+import java_cup.runtime.XMLElement;
+
+parser code {:
+    CircleDoubleList list = new CircleDoubleList();
+    NodeDouble node = new NodeDouble(0);
+    BBTree tree = new BBTree();
+
+    public void setBBTree(BBTree existTree){
+        tree = existTree;
+    }
+
+    public CircleDoubleList getList(){
+        return list;
+    }
+:}
+
+terminal COMA, OPEN_CURLY, CLOSE_CURLY, COLON, SEMI_COLON, NUMBER, ID, COLOR;
+
+non terminal beginning, auximage, auximage_re, image, image_re;
+
+start with beginning;
+
+beginning ::= image_re;
+
+auximage ::= NUMBER:layer auximage_re  {:
+                                            node.insertLayer(tree.findNode(Integer.parseInt(String.valueOf(layer))));
+                                        :}
+            | auximage_re;
+auximage_re ::= COMA NUMBER:layer auximage_re{:
+                                            node.insertLayer(tree.findNode(Integer.parseInt(String.valueOf(layer))));
+                                        :}
+                |CLOSE_CURLY {:node = new NodeDouble(0);:};
+
+image ::= NUMBER:images OPEN_CURLY auximage {:
+                                                        node.setId(Integer.parseInt(String.valueOf(images)));
+                                                        list.insert(node);
+                                                    :};
+image_re ::= image image_re
+            |/*empty*/;
+
+
