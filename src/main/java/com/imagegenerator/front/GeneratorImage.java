@@ -6,18 +6,25 @@
 package com.imagegenerator.front;
 
 import com.imagegenerator.avltree.*;
+import com.imagegenerator.data.Data;
+import java.io.File;
+import javax.swing.JFileChooser;
+import static javax.swing.JFileChooser.APPROVE_OPTION;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  *
  * @author camran1234
  */
 public class GeneratorImage extends javax.swing.JFrame {
-    AvlTree tree = new AvlTree();
+    Data data;
     /**
      * Creates new form GeneratorImage
      */
     public GeneratorImage() {
+        data = new Data();
         initComponents();
     }
 
@@ -32,8 +39,12 @@ public class GeneratorImage extends javax.swing.JFrame {
 
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
-        jTextField1 = new javax.swing.JTextField();
+        jButtonCapaImport = new javax.swing.JButton();
+        jButtonImagenImport = new javax.swing.JButton();
+        jButtonUsuarioImport = new javax.swing.JButton();
+        jButtonGenerar = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -41,76 +52,172 @@ public class GeneratorImage extends javax.swing.JFrame {
 
         jLabel1.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel1.setText("ImageGenerator");
+        jLabel1.setText("Generador de Imagenes");
 
-        jButton1.setText("Insert");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        jButtonCapaImport.setText("Importar Capa");
+        jButtonCapaImport.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                jButtonCapaImportActionPerformed(evt);
             }
         });
 
-        jTextField1.setText("Insertar Numero");
+        jButtonImagenImport.setText("Importar Imagenes");
+        jButtonImagenImport.setVisible(false);
+        jButtonImagenImport.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonImagenImportActionPerformed(evt);
+            }
+        });
+
+        jButtonUsuarioImport.setText("Importar Usuarios");
+        jButtonUsuarioImport.setVisible(false);
+        jButtonUsuarioImport.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonUsuarioImportActionPerformed(evt);
+            }
+        });
+
+        jButtonGenerar.setText("Generar Imagenes");
+        jButtonGenerar.setVisible(false);
+        jButtonGenerar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonGenerarActionPerformed(evt);
+            }
+        });
+
+        jLabel2.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel2.setText("Importar Archivos");
+
+        jLabel3.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
+        jLabel3.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel3.setText("Acceder Funcionalidades");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGap(110, 110, 110)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButtonGenerar)
+                    .addComponent(jLabel3))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 192, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(jButtonImagenImport, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButtonCapaImport, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButtonUsuarioImport, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(235, 235, 235)
-                        .addComponent(jLabel1))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(85, 85, 85)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(28, 28, 28)
-                        .addComponent(jButton1)))
-                .addContainerGap(220, Short.MAX_VALUE))
+                        .addGap(30, 30, 30)
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 15, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(53, 53, 53))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(201, 201, 201)
+                .addComponent(jLabel1)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addComponent(jLabel1)
-                .addGap(40, 40, 40)
+                .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1))
-                .addContainerGap(314, Short.MAX_VALUE))
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel3))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addComponent(jButtonCapaImport))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(7, 7, 7)
+                        .addComponent(jButtonGenerar)))
+                .addGap(18, 18, 18)
+                .addComponent(jButtonImagenImport)
+                .addGap(18, 18, 18)
+                .addComponent(jButtonUsuarioImport)
+                .addContainerGap(215, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        try {
-            int num = Integer.parseInt(jTextField1.getText());
-            NodeAvl node = new NodeAvl(num);
-            tree.addNode(node);
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "No es un id");
+    private void jButtonCapaImportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCapaImportActionPerformed
+        try{
+            String path="";
+            JFileChooser fileOpener = new JFileChooser();
+            fileOpener.addChoosableFileFilter(new FileNameExtensionFilter("cap","cap"));
+            fileOpener.setAcceptAllFileFilterUsed(false);
+            int seleccion = fileOpener.showOpenDialog(this);
+            if(seleccion == APPROVE_OPTION){
+                File directory = new File(path);
+                System.out.println(directory.getAbsolutePath());
+                System.out.println(directory.getName());
+                path = fileOpener.getSelectedFile().getPath();
+                data.read(path, 1);
+                jButtonImagenImport.setVisible(true);
+            }
+            
+        }catch(Throwable e){
+            e.printStackTrace();
         }
-        
-        
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_jButtonCapaImportActionPerformed
+
+    private void jButtonImagenImportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonImagenImportActionPerformed
+        try{
+            String path="";
+            JFileChooser fileOpener = new JFileChooser();
+            fileOpener.addChoosableFileFilter(new FileNameExtensionFilter("im","im"));
+            fileOpener.setAcceptAllFileFilterUsed(false);
+            int seleccion = fileOpener.showOpenDialog(this);
+            if(seleccion == APPROVE_OPTION){
+                path = fileOpener.getSelectedFile().getPath();
+                data.read(path, 2);
+                jButtonUsuarioImport.setVisible(true);
+            }
+            
+        }catch(Throwable e){
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_jButtonImagenImportActionPerformed
+
+    private void jButtonUsuarioImportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonUsuarioImportActionPerformed
+        try{
+            String path="";
+            JFileChooser fileOpener = new JFileChooser();
+            fileOpener.addChoosableFileFilter(new FileNameExtensionFilter("usr","usr"));
+            fileOpener.setAcceptAllFileFilterUsed(false);
+            int seleccion = fileOpener.showOpenDialog(this);
+            if(seleccion == APPROVE_OPTION){
+                path = fileOpener.getSelectedFile().getPath();
+                data.read(path, 3);
+                jButtonGenerar.setVisible(true);
+            }
+            
+        }catch(Throwable e){
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_jButtonUsuarioImportActionPerformed
+
+    private void jButtonGenerarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonGenerarActionPerformed
+        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        ExportImages frameExport = new ExportImages(this.data);
+        frameExport.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_jButtonGenerarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -148,9 +255,13 @@ public class GeneratorImage extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButtonCapaImport;
+    private javax.swing.JButton jButtonGenerar;
+    private javax.swing.JButton jButtonImagenImport;
+    private javax.swing.JButton jButtonUsuarioImport;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JTextField jTextField1;
     // End of variables declaration//GEN-END:variables
 }

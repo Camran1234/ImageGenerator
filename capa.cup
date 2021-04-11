@@ -1,0 +1,36 @@
+package com.imagegenerator.datareader;
+
+import com.imagegenerator.treebb.BBTree;
+import com.imagegenerator.matrix.SparseMatrix;
+import java_cup.runtime.XMLElement;
+
+
+
+//Save in BB TREE
+parser code {:
+    SparseMatrix matrix = new SparseMatrix(0);
+
+    BBTree tree = new BBTree();
+
+    public BBTree getTree(){
+        return tree;
+    }
+:}
+
+terminal COMA, OPEN_CURLY, CLOSE_CURLY, COLON, SEMI_COLON, NUMBER, ID, COLOR;
+
+non terminal beginning, auxcap, cap, cap_re;
+
+start with beginning;
+
+beginning ::= cap_re;
+
+auxcap ::= NUMBER:row COMA NUMBER:col COMA COLOR:hexcolor COLON auxcap{:matrix.insert(Integer.parseInt(String.valueOf(col)),Integer.parseInt(String.valueOf(row)),String.valueOf(hexcolor));:}
+              |CLOSE_CURLY {:matrix = new SparseMatrix(0);:};
+
+
+cap ::= NUMBER:layer OPEN_CURLY auxcap {: matrix.setLayer(Integer.parseInt(String.valueOf(layer)));
+                                                tree.addNode(Integer.parseInt(String.valueOf(layer)),matrix); :};
+
+cap_re ::= cap cap_re
+            |/*empty*/;                                            

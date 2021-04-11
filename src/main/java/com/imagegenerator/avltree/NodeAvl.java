@@ -5,57 +5,75 @@
  */
 package com.imagegenerator.avltree;
 
+import com.imagegenerator.circledoublelist.NodeDouble;
+import com.imagegenerator.list.SimpleDoubleList;
+import java.util.ArrayList;
+
 /**
- *
+ * Node for save user and the images that contains
  * @author camran1234
  */
-public class NodeAvl <T>{
+public class NodeAvl {
     private int balanceFactor=0;
-    private int id;
+    private String id;
     private NodeAvl rightNode=null;
     private NodeAvl leftNode=null;
-    private T object=null;
-    
-    public NodeAvl (int id,T object){
-        this.object = object;
-        this.id = id;
-        this.balanceFactor = 1;
-    }
-    public NodeAvl(int id){
+    private SimpleDoubleList doubleList = new SimpleDoubleList();
+   
+    public NodeAvl(String id){
         this.id = id;
         this.balanceFactor = 1;
     }
     
     public NodeAvl(NodeAvl auxNode){
-        this.object = (T) auxNode.getObject();
         this.id = auxNode.getId();
     }
     
-    boolean deleteNode(int nodeId){
-        boolean answer=false;
-        if(nodeId>this.id){
-            answer = rightNode.deleteNode(nodeId);
-        }else if(nodeId<this.id){
-            answer = leftNode.deleteNode(nodeId);
-        }else{
-            BalanceFactorHandler handler = new BalanceFactorHandler();
-            NodeAvl node = handler.findNode(this);
-            this.id = node.getId();
-            this.object = (T) node.getObject();
-            node=null;
-            handler.resizeBalanceFactor(this);
-        }
-        return answer;
+    public void setNodeImage(NodeDouble node){
+        doubleList.addNode(node.getId(),node);
     }
     
-    public NodeAvl getLastElementRight(){
+    
+    public NodeAvl getLastElementRight(NodeAvl father){
         NodeAvl aux=this;
         if(this.rightNode!=null){
-            aux = this.rightNode.getLastElementRight();
+            aux = this.rightNode.getLastElementRight(aux);
+        }else{
+            father.setRightNode(null);
+            father.setBalanceFactor(1);
         }
-        
+        if(father!=null){
+            if(father.getRightNode()!=null){
+                father.setBalanceFactor(father.getBalanceFactor()+1);
+            }
+        }
         return aux;
     }
+    
+    public NodeAvl findNode(String id){
+        NodeAvl founded=null;
+        if(this.id.compareToIgnoreCase(id)<0){
+            //If its null will be added just once
+            if(rightNode!=null){
+                //Continue seraching
+                founded = rightNode.findNode(id);
+            }else{
+                founded=null;
+            }
+        }else if(this.id.compareToIgnoreCase(id)>0){
+            if(leftNode!=null){
+                founded = leftNode.findNode(id);
+            }else{
+                founded = null;
+            }
+        }else{
+            founded = this;
+        }
+        
+        return founded;
+    }
+    
+    
     
     /**
      * Function to insert new nodes by id and reasign balanceFactor
@@ -64,8 +82,9 @@ public class NodeAvl <T>{
      */
     int insertNode(NodeAvl node){
         int auxfact=0;
+        
         //We make the comprobation of were we put the node
-        if(node.getId() >= this.id){
+        if(this.id.compareToIgnoreCase(node.getId())<0){
             //If its null will be added just once
             if(rightNode!=null){
                 auxfact = rightNode.insertNode(node);
@@ -73,7 +92,7 @@ public class NodeAvl <T>{
                 auxfact = 1;
                 rightNode = node;
             }
-        }else if(node.getId() <this.id){
+        }else if(this.id.compareToIgnoreCase(node.getId())>=0){
             if(leftNode!=null){
                 auxfact = leftNode.insertNode(node);
             }else{
@@ -94,6 +113,60 @@ public class NodeAvl <T>{
     }
     
     public NodeAvl checkRotate(){
+        NodeAvl node=this;
+        int rightFact=0;
+        int leftFact=0;
+        int result = 0;
+        if(rightNode!=null && leftNode==null){
+            rightFact = rightNode.getBalanceFactor();
+            result = rightFact - leftFact;
+            //Is bigger in the left side
+            if(result<-1){
+                if(result==-3){
+                    this.leftNode.checkRotate();
+                }else if(result==-2){
+                    node = simpleRightRotate();
+                }
+                //Is bigger in the right side
+            }else if(result>1){
+                if(result==3){
+                    this.rightNode.checkRotate();
+                }else if(result==2){
+                    node = simpleLeftRotate();
+                }
+            }
+        }else if(leftNode!=null && rightNode==null){
+            leftFact = leftNode.getBalanceFactor();
+            result = rightFact - leftFact;
+            //Is bigger in the left side
+            if(result<-1){
+                if(result==-3){
+                    this.leftNode.checkRotate();
+                }else if(result==-2){
+                    node = simpleRightRotate();
+                }
+                //Is bigger in the right side
+            }else if(result>1){
+                if(result==3){
+                    this.rightNode.checkRotate();
+                }else if(result==2){
+                    node = simpleLeftRotate();
+                }
+            }
+        }else if(rightNode!=null && leftNode!=null){
+            leftFact = leftNode.getBalanceFactor();
+            rightFact = rightNode.getBalanceFactor();
+            result = rightFact - leftFact;
+            if(result>0){
+                node = simpleLeftRotate();
+            }else if(result<0){
+                node = simpleRightRotate();
+            }
+        }    
+        return node;
+    }
+    
+    public NodeAvl checkBalanceFact(){
         NodeAvl node=this;
         int rightFact=0;
         int leftFact=0;
@@ -137,9 +210,10 @@ public class NodeAvl <T>{
         //d'
         rightNode = this.leftNode.getRightNode();
         
+        this.setLeftNode(rightNode);
         rootNode.setLeftNode(leftNode);
         rootNode.setRightNode(this);
-        this.setLeftNode(rightNode);
+        
         
         //We adjust the new balance factor
         BalanceFactorHandler handlerBalance = new BalanceFactorHandler();
@@ -158,10 +232,10 @@ public class NodeAvl <T>{
         //'d
         NodeAvl rightNode = this.rightNode.getRightNode();
         
-        
+        this.setRightNode(this.rightNode.getLeftNode());
         rootNode.setRightNode(rightNode);
         rootNode.setLeftNode(leftNode);
-        this.setRightNode(this.rightNode.getLeftNode());
+        
         
         //We adjust the new balance factor
         BalanceFactorHandler handlerBalance = new BalanceFactorHandler();
@@ -171,8 +245,12 @@ public class NodeAvl <T>{
         return rootNode;
     }
     
-    public int getId(){
+    public String getId(){
         return this.id;
+    }
+    
+    public void setId(String id){
+        this.id = id;
     }
     
     //Getter and Setters
@@ -201,15 +279,54 @@ public class NodeAvl <T>{
     public void setLeftNode(NodeAvl leftNode) {
         this.leftNode = leftNode;
     }
-
-    public T getObject() {
-        return object;
-    }
-
-    public void setObject(T object) {
-        this.object = object;
+    
+    /**
+     * First declare the node then connect
+     * @return 
+     */
+    public String generateGraphvizCode(){
+        StringBuffer string = new StringBuffer();
+        //Declare this node
+        string.append(this.generateDeclareCode());
+        //Generate the declare Codes;
+        if(leftNode!=null){
+            string.append(leftNode.generateGraphvizCode());
+            string.append("t"+getId()+" -> "+"t"+leftNode.getId()+";\n");
+        }
+        if(rightNode!=null){
+            string.append(rightNode.generateGraphvizCode());
+            string.append("t"+getId()+" -> "+"t"+rightNode.getId()+";\n");
+        }
+        
+        try {
+            string.append(doubleList.getGraphvizCode(id,'t'));
+        } catch (Exception e) {
+            System.out.println("Error en generateGraphvizCode en id: "+id+", Error: "+e.getMessage());
+            e.printStackTrace();
+        }
+        
+        return string.toString();
     }
     
+    private String generateDeclareCode(){
+        String string = "t"+this.getId()+" [label=\""+this.getId()+"\" ];\n";
+        return string;
+    }
+    
+    
+    public void getUsers(ArrayList<String> list){
+        list.add(id);
+        if(rightNode!=null){
+            rightNode.getUsers(list);
+        }
+        if(leftNode!=null){
+            leftNode.getUsers(list);
+        }
+    }
+    
+    public void getImages(ArrayList<String> list){
+        doubleList.getImages(list);
+    }
     
     
 }

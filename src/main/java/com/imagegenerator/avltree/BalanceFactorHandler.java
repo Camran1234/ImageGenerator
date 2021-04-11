@@ -46,23 +46,5 @@ public class BalanceFactorHandler {
         }
         return node;
     }
-    
-    /**
-     * find a replace
-     * @param node
-     * @return 
-     */
-    public NodeAvl findNode(NodeAvl node){
-        if(node.getRightNode()!=null && node.getLeftNode()==null){
-            return node.getRightNode();
-        }else if(node.getRightNode()==null && node.getLeftNode()!=null){
-            return node.getLeftNode().getLastElementRight();
-        }else if(node.getRightNode()==null && node.getLeftNode()==null){
-            return node;
-        }else if(node.getRightNode()!=null && node.getLeftNode()!=null){
-            return node.getLeftNode().getLastElementRight();
-        }        
-        
-        return node;
-    }
+  
 }
